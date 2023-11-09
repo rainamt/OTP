@@ -1,0 +1,56 @@
+import re
+import random
+import time
+
+# Define a function to get a valid phone number.
+def get_valid_phone_number():
+    while True:
+        phone_number = input("Enter your phone number: ")
+        if re.fullmatch(r"09\d{9}", phone_number):  # Validate phone number format.
+            return phone_number
+        else:
+            print("Invalid Phone Number! Please enter a valid phone number.")
+
+# Define a function to generate a 4-digit OTP.
+def generate_otp():
+    return str(random.randint(1000, 9999))
+
+try:
+    while True:
+        # Step 1: Get a valid phone number from the user.
+        phone_number = get_valid_phone_number()
+        
+        # Step 2: Generate a random 4-digit OTP.
+        otp = generate_otp()
+        otp_time = time.time()
+        otp_valid_seconds = 60  # OTP is valid for 60 seconds.
+
+        # Step 3: Display the OTP and its validity duration.
+        print(f"Your OTP is: {otp} (Valid for {otp_valid_seconds} seconds)")
+
+        otp_verified = False
+        while otp_valid_seconds > 0 and not otp_verified:
+            # Step 4: Prompt the user to enter the OTP and measure time.
+            start_time = time.time()
+            user_input = input(f"Enter your OTP (time left {otp_valid_seconds}s): ")
+            elapsed_time = time.time() - start_time
+            otp_valid_seconds -= int(elapsed_time)
+
+            # Step 5: Check if the entered OTP is correct.
+            if user_input == otp:
+                print("OTP is valid! Transaction Successful!")
+                otp_verified = True
+            else:
+                print("Incorrect OTP! Please try again.")
+                if otp_valid_seconds <= 0:
+                    print("Your OTP has expired. Please generate a new one.")
+                    break
+
+        if not otp_verified:
+            # Step 6: Ask if the user wants to try with a new phone number.
+            continue_choice = input("Do you want to try with a new phone number? (yes/no): ")
+            if continue_choice.lower() != "yes":
+                break
+
+except ValueError as e:
+    print(e)
